@@ -2,6 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+/*
+notes:
+
+In rare cases you might want a component to hide itself even though it was rendered by another component. To do this return null instead of its render output.
+
+
+ */
+
+
+
 function App() {
     return (
         //good practice to extract everything into functions
@@ -14,6 +24,12 @@ function App() {
             </div>
             <div>
                 <Toggle />
+            </div>
+            <div>
+                <LoginControl />
+            </div>
+            <div>
+                <Mailbox unreadMessages={messages} />
             </div>
         </div>
     );
@@ -106,6 +122,77 @@ class Toggle extends React.Component {
         )
     }
 }
+
+function LoginButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Login
+        </button>
+    );
+}
+
+function LogoutButton(props) {
+    return (
+        <button onClick={props.onClick}>
+            Logout
+        </button>
+    );
+}
+
+class LoginControl extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleLoginClick = this.handleLoginClick.bind(this);
+        this.handleLogoutClick = this.handleLogoutClick.bind(this);
+        this.state = {isLoggedIn: false};
+    }
+
+    handleLoginClick() {
+        this.setState({isLoggedIn: true});
+    }
+
+    handleLogoutClick() {
+        this.setState({isLoggedIn: false});
+    }
+
+    render() {
+        const isLoggedIn = this.state.isLoggedIn;
+        let button;
+        let greeting;
+        if (isLoggedIn) {
+            button = <LogoutButton onClick={this.handleLogoutClick} />;
+            greeting = <Greetings userId={2} />
+        } else {
+            button = <LoginButton onClick={this.handleLoginClick} />;
+            greeting = <Greetings />
+        }
+
+        return (
+            <div>
+                {greeting}
+                {button}
+            </div>
+        );
+    }
+}
+
+const messages = ['React', 'Re: React', 'Re:Re: React'];
+function Mailbox(props) {
+    const unreadMessages = props.unreadMessages;
+    return (
+        //if the condition is true, the element right after && will appear in the output. If it is false, React will ignore and skip it.
+        <div>
+            <h1>Hello!</h1>
+            {unreadMessages.length > 0 &&
+            <h2>
+                You have {unreadMessages.length} unread messages.
+            </h2>
+            }
+        </div>
+    );
+}
+
+
 
 ReactDOM.render(
     <App />,
